@@ -1,5 +1,6 @@
 import sys
 import random
+import string
 from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel
 from PyQt6.QtCore import Qt
 
@@ -8,7 +9,7 @@ class BibleVerseApp(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Bible Verse App")
-        self.setGeometry(100, 100, 400, 400)  # Set the window geometry (x, y, width, height)
+        self.setGeometry(100, 100, 400, 500)  # Set the window geometry (x, y, width, height)
 
         self.verses = [
             {
@@ -28,12 +29,26 @@ class BibleVerseApp(QMainWindow):
         reference_text = verse['reference']
         # print(reference_text)
 
-        # Randomly bold 30% of the words
+        # Randomly bold 30% of the words (ignoring punctuation)
         words = verse_text.split()
-        num_words_to_bold = int(len(words) * 0.3)
-        bold_indices = random.sample(range(len(words)), num_words_to_bold)
-        for index in bold_indices:
-            words[index] = f"<b>{words[index]}</b>"
+        punctuations = set(string.punctuation)
+        words_without_punctuation = [word for word in words if not any(char in punctuations for char in word)]
+        num_words_to_bold = int(len(words_without_punctuation) * 0.3)
+        bold_indices = random.sample(range(len(words_without_punctuation)), num_words_to_bold)
+        test = ""
+        bold_index_count = 0
+        for index, word in enumerate(words):
+            if any(char in punctuations for char in word):
+                words[index] = word
+            else:
+                if bold_index_count in bold_indices:
+                    numOfUS = len(word)
+                    print(numOfUS)
+                    for i in range(numOfUS):
+                        test += "_"
+                    words[index] = test
+                    test = ""
+                bold_index_count += 1
 
         # Reconstruct the verse text
         verse_text = ' '.join(words)
@@ -51,7 +66,7 @@ class BibleVerseApp(QMainWindow):
             self.reference_label.setText(reference_text)
         else:
             reference_label = QLabel(reference_text, self)
-            reference_label.setGeometry(20, 310, 360, 30)  # Set the label geometry (x, y, width, height)
+            reference_label.setGeometry(20, 460, 360, 30)  # Set the label geometry (x, y, width, height)
             reference_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
             reference_label.setStyleSheet("font-size: 18px; font-family: Arial;")
             self.reference_label = reference_label
