@@ -20,15 +20,12 @@ class BibleVerseApp(QMainWindow):
 
         self.current_verse_index = 0
         self.display_verse()
-
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)  # Enable focus for the main window
-
-    def display_verse(self):
+    
+    def splitVerse(self):
         verse = self.verses[self.current_verse_index]
         verse_text = verse['text']
-        reference_text = verse['reference']
-        # print(reference_text)
-
+        # reference_text = verse['reference']
         # Randomly bold 30% of the words (ignoring punctuation)
         words = verse_text.split()
         punctuations = set(string.punctuation)
@@ -43,7 +40,6 @@ class BibleVerseApp(QMainWindow):
             else:
                 if bold_index_count in bold_indices:
                     numOfUS = len(word)
-                    print(numOfUS)
                     for i in range(numOfUS):
                         test += "_"
                     words[index] = test
@@ -52,8 +48,40 @@ class BibleVerseApp(QMainWindow):
 
         # Reconstruct the verse text
         verse_text = ' '.join(words)
+        self.formattedVerse = verse_text
+
+    def display_verse(self):
+        self.splitVerse()
+        verse = self.verses[self.current_verse_index]
+        # verse_text = verse['text']
+        reference_text = verse['reference']
+        # print(reference_text)
         
-        verse_label = QLabel(verse_text, self)
+        # Randomly bold 30% of the words (ignoring punctuation)
+        # words = verse_text.split()
+        # punctuations = set(string.punctuation)
+        # words_without_punctuation = [word for word in words if not any(char in punctuations for char in word)]
+        # num_words_to_bold = int(len(words_without_punctuation) * 0.3)
+        # bold_indices = random.sample(range(len(words_without_punctuation)), num_words_to_bold)
+        # test = ""
+        # bold_index_count = 0
+        # for index, word in enumerate(words):
+        #     if any(char in punctuations for char in word):
+        #         words[index] = word
+        #     else:
+        #         if bold_index_count in bold_indices:
+        #             numOfUS = len(word)
+        #             print(numOfUS)
+        #             for i in range(numOfUS):
+        #                 test += "_"
+        #             words[index] = test
+        #             test = ""
+        #         bold_index_count += 1
+
+        # # Reconstruct the verse text
+        # verse_text = ' '.join(words)
+        verse_label_text = self.formattedVerse
+        verse_label = QLabel(verse_label_text, self)
         verse_label.setGeometry(20, 20, 360, 280)  # Set the label geometry (x, y, width, height)
         verse_label.setWordWrap(True)
         verse_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
